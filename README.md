@@ -1,3 +1,3 @@
 # AlpineForms
 
-A description of this package.
+Alpine LIS modular forms viewing and editing extension.
