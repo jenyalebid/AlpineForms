@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Form" representedClassName=".Form" syncable="YES" codeGenerationType="class">
-        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    <entity name="Form" representedClassName="Form" syncable="YES" codeGenerationType="class">
         <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="updated_date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Form" inverseName="parent" inverseEntity="Form"/>
         <relationship name="template" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Template" inverseName="forms" inverseEntity="Template"/>
     </entity>
     <entity name="FormField" representedClassName="FormField" syncable="YES" codeGenerationType="class">
         <attribute name="binary_data" optional="YES" attributeType="Binary"/>
-        <attribute name="boolean_data" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="boolean_data" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="double_data" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="geometry" optional="YES" attributeType="String"/>
         <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -30,6 +30,7 @@
     <entity name="TemplateField" representedClassName="TemplateField" syncable="YES" codeGenerationType="class">
         <attribute name="caption" optional="YES" attributeType="String"/>
         <attribute name="custom_script" optional="YES" attributeType="String"/>
+        <attribute name="field_order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="font_size" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="image_data" optional="YES" attributeType="Binary"/>
@@ -47,7 +48,7 @@
         <element name="Form" positionX="-45" positionY="117" width="128" height="89"/>
         <element name="FormField" positionX="-18" positionY="126" width="128" height="149"/>
         <element name="Template" positionX="-63" positionY="-18" width="128" height="164"/>
-        <element name="TemplateField" positionX="-54" positionY="45" width="128" height="179"/>
+        <element name="TemplateField" positionX="-54" positionY="45" width="128" height="194"/>
         <element name="UpdateTracker" positionX="-9" positionY="162" width="128" height="59"/>
     </elements>
 </model>

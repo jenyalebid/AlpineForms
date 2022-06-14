@@ -27,28 +27,38 @@ public class Database {
         let dispatchGroup = DispatchGroup()
         syncTemplate(with: dispatchGroup, in: self._mainContext, completionHandler: { templateResult in
             if templateResult {
-                completionHandler(true)
-                dispatchGroup.leave()
+                self.syncForm(with: dispatchGroup, in: self._mainContext, completionHandler: { formResult in
+                    if formResult {
+                        completionHandler(true)
+                        dispatchGroup.leave()
+                    }
+                })
             }
         })
     }
     
     func syncTemplate(with dispatchGroup: DispatchGroup, in context: NSManagedObjectContext, completionHandler: @escaping(Bool) -> Void) {
         dispatchGroup.enter()
-        Template.sync(in: context, handler: {templateResult in
+        Template.sync(in: context, handler: { templateResult in
             if templateResult {
-//                TemplateField.sync(in: context, handler: {fieldResult in
-//                    if fieldResult {
-//                        completionHandler(true)
-//                        dispatchGroup.leave()
-//                    }
-//
-//                })
-                if templateResult {
-                    completionHandler(true)
-                }
+                TemplateField.sync(in: context, handler: { fieldResult in
+                    if fieldResult {
+                        completionHandler(true)
+                    }
+                })
             }
         })
     }
     
+    func syncForm(with dispatchGroup: DispatchGroup, in context: NSManagedObjectContext, completionHandler: @escaping(Bool) -> Void) {
+        Form.sync(in: context, handler: { formResult in
+            if formResult {
+                FormField.sync(in: context, handler: { fieldResult in
+                    if fieldResult {
+                        completionHandler(true)
+                    }
+                })
+            }
+        })
+    }
 }

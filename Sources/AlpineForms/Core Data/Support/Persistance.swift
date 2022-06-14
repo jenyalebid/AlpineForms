@@ -29,7 +29,7 @@ public struct FormsPersistenceController {
         return result
     }()
     
-    let container: NSPersistentContainer
+    public let container: NSPersistentContainer
     
     public init(inMemory: Bool = false) {
         let modelURL = Bundle.module.url(forResource:"AlpineForms", withExtension: "momd")

@@ -33,28 +33,28 @@ extension Template {
                             WHERE deleted IS FALSE
                             """
                         
-                        if let lastUpdate = lastUpdate {
-                            text = "\(text) AND updated >= timestamp '\(lastUpdate.toString(format: "YYYY-MM-dd HH:mm:ss"))'";
-                        }
+//                        if let lastUpdate = lastUpdate {
+//                            text = "\(text) AND updated >= timestamp '\(lastUpdate.toString(format: "YYYY-MM-dd HH:mm:ss"))'";
+//                        }
                         
                         print("---------------->>> Importing Templates")
                         
                         //get records count
-                        let c_text = "select count(*) from (\(text)) as temp"
-                        let c_statement = try connection.prepareStatement(text: c_text)
-                        defer { c_statement.close() }
-                        let c_cursor = try c_statement.execute()
-                        defer { c_cursor.close() }
-                        
-                        for row in c_cursor {
-                            let recCount = try row.get().columns[0].int()
-                            print(recCount)
-                            if recCount == 0 {
-                                print("---------------->>> No Updates to Templates found")
-                                handler(true)
-                                return
-                            }
-                        }
+//                        let c_text = "select count(*) from (\(text)) as temp"
+//                        let c_statement = try connection.prepareStatement(text: c_text)
+//                        defer { c_statement.close() }
+//                        let c_cursor = try c_statement.execute()
+//                        defer { c_cursor.close() }
+//
+//                        for row in c_cursor {
+//                            let recCount = try row.get().columns[0].int()
+//                            print(recCount)
+//                            if recCount == 0 {
+//                                print("---------------->>> No Updates to Templates found")
+//                                handler(true)
+//                                return
+//                            }
+//                        }
                         
                         let statement = try connection.prepareStatement(text: text)
                         defer { statement.close() }
@@ -99,17 +99,6 @@ extension Template {
         }
     }
     
-    func save(context: NSManagedObjectContext) {
-        context.performAndWait {
-            do {
-                try context.save()
-            }
-            catch {
-                print("Failure to save context: \(error)")
-            }
-        }
-    }
-    
     static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> Template? {
         var result: Template? = nil
         do {
@@ -123,5 +112,16 @@ extension Template {
             fatalError(error.localizedDescription)
         }
         return result
+    }
+    
+    public static func all() -> [Template] {
+        let fetchRequest: NSFetchRequest<Template> = Template.fetchRequest()
+        do {
+            let results = try Database.shared._mainContext.fetch(fetchRequest)
+            return results
+        }
+        catch {
+            fatalError(error.localizedDescription)
+        }
     }
 }
