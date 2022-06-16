@@ -9,6 +9,14 @@ import CoreData
 
 extension AF_Form {
     
+    public func update(missingRequirements: Bool?) {
+        if let missingRequirements = missingRequirements {
+            missingRequirements_ = missingRequirements
+        }
+        changed_ = true
+        updated_date = Date()
+    }
+    
     static func sync(in managedObjectContext: NSManagedObjectContext, handler: @escaping ((Bool)->Void)) {
         managedObjectContext.performAndWait {
             do {
@@ -76,12 +84,12 @@ extension AF_Form {
                                         }
                                         if let form = form {
                                             form.template = template
-                                            
-                                            if let parentID = try UUID(uuidString: columns[2].optionalString() ?? "") {
-                                                if let parent = AF_Form.find(in: managedObjectContext, by: parentID) {
-                                                    form.parent = parent
-                                                }
-                                            }
+                                            form.parentGUID = try UUID(uuidString: columns[2].optionalString() ?? "")
+//                                            if let parentID = try UUID(uuidString: columns[2].optionalString() ?? "") {
+//                                                if let parent = AF_Form.find(in: managedObjectContext, by: parentID) {
+//                                                    form.parent = parent
+//                                                }
+//                                            }
                                             form.updated_date = try columns[3].timestampWithTimeZone().date
                                             form.save(context: managedObjectContext)
                                         }
@@ -103,7 +111,7 @@ extension AF_Form {
         }
     }
     
-    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> AF_Form? {
+    static func find(in managedObjectContext: NSManagedObjectContext = Database.shared._mainContext, by id: UUID) -> AF_Form? {
         var result: AF_Form? = nil
         do {
             let fetchRequest: NSFetchRequest<AF_Form>
@@ -131,4 +139,101 @@ extension AF_Form {
             fatalError(error.localizedDescription)
         }
     }
+    
+    static func fetchTemplateFields(in managedObjectContext: NSManagedObjectContext = Database.shared._mainContext, template: AF_Template) -> [AF_TemplateField] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AF_TemplateField.entity().name ?? "" )
+        let predicate = NSPredicate(format: "template.guid = %@", template.guid! as CVarArg)
+        let sort = NSSortDescriptor(keyPath: \AF_TemplateField.field_order, ascending: true)
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = [sort]
+        
+        do {
+            let result = try managedObjectContext.fetch(fetchRequest)
+            return result as? [AF_TemplateField] ?? []
+            
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+    static func find(in managedObjectContext: NSManagedObjectContext = Database.shared._mainContext, template: AF_Template, parent: UUID?) -> AF_Form? {
+        let fetchRequest: NSFetchRequest<AF_Form> = AF_Form.fetchRequest()
+        if let parent = parent {
+            fetchRequest.predicate = NSPredicate(format: "template.guid = %@ AND parentGUID = %@", template.guid! as CVarArg, parent as CVarArg)
+        }
+        else {
+            fetchRequest.predicate = NSPredicate(format: "template.guid = %@", template.guid! as CVarArg)
+        }
+        
+        do {
+            let results = try managedObjectContext.fetch(fetchRequest)
+            for result in results {
+                return result
+            }
+        }
+        catch {
+            fatalError(error.localizedDescription)
+        }
+        return nil
+    }
+    
+    static func create(in managedObjectContext: NSManagedObjectContext = Database.shared._mainContext, template: AF_Template, parent: UUID?) -> AF_Form {
+        let form = self.init(context: managedObjectContext)
+        form.guid = UUID()
+        form.updated_date = Date()
+        form.template = template
+        
+        _ = createFields(in: managedObjectContext, form: form, template: template)
+        
+        do {
+            try managedObjectContext.save()
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+        return form
+    }
+    
+    static func createFields(in managedObjectContext: NSManagedObjectContext = Database.shared._mainContext, form: AF_Form, template: AF_Template) -> [AF_FormField] {
+        let templateFields = fetchTemplate(template: template)
+        
+        var fields: [AF_FormField] = []
+        
+        for field in templateFields {
+            fields.append(AF_FormField.getFieldFromTemplate(form: form, templateField: field, in: managedObjectContext))
+        }
+        return fields
+    }
+    
+    static func fetchTemplate(in managedObjectContext: NSManagedObjectContext = Database.shared._mainContext, template: AF_Template) -> [AF_TemplateField] {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AF_TemplateField.entity().name ?? "" )
+        let predicate = NSPredicate(format: "template.guid = %@", template.guid! as CVarArg)
+        let sort = NSSortDescriptor(keyPath: \AF_TemplateField.field_order, ascending: true)
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = [sort]
+        
+        do {
+            let result = try managedObjectContext.fetch(fetchRequest)
+            return result as? [AF_TemplateField] ?? []
+            
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+//    static func fetchFields(in managedObjectContext: NSManagedObjectContext, form: Form) -> [FormField] {
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: FormField.entity().name ?? "" )
+//        let predicate = NSPredicate(format: "form.id = %@", form.id! as CVarArg)
+//        let sort = NSSortDescriptor(keyPath: \FormField.id, ascending: true)
+//        fetchRequest.predicate = predicate
+//        fetchRequest.sortDescriptors = [sort]
+//
+//        do {
+//            let result = try managedObjectContext.fetch(fetchRequest)
+//            return result as? [FormField] ?? []
+//
+//        } catch {
+//            fatalError(error.localizedDescription)
+//        }
+//    }
 }

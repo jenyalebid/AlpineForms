@@ -128,4 +128,52 @@ extension AF_FormField {
         }
         return result
     }
+    
+    static func fetchField(in managedObjectContext: NSManagedObjectContext = Database.shared._mainContext, templateField: AF_TemplateField, form: AF_Form) -> AF_FormField {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AF_FormField.entity().name ?? "" )
+        let predicate = NSPredicate(format: "templateField.guid = %@ AND form.guid = %@", templateField.guid! as CVarArg, form.guid! as CVarArg)
+        let sort = NSSortDescriptor(keyPath: \AF_FormField.guid, ascending: true)
+        fetchRequest.predicate = predicate
+        fetchRequest.sortDescriptors = [sort]
+        
+        do {
+            let result = try managedObjectContext.fetch(fetchRequest)
+            
+            if result.isEmpty {
+                return getFieldFromTemplate(form: form, templateField: templateField, in: managedObjectContext)
+            }
+            
+            return result.first as! AF_FormField
+            
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
+    static func getFieldFromTemplate(form: AF_Form, templateField: AF_TemplateField, in managedObjectContext: NSManagedObjectContext = Database.shared._mainContext) -> AF_FormField {
+        let fetchRequest: NSFetchRequest<AF_FormField> = AF_FormField.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "templateField.guid = %@ AND form.guid = %@", templateField.guid!.uuidString, form.guid!.uuidString)
+        do {
+            let results = try managedObjectContext.fetch(fetchRequest)
+            for result in results {
+                return result
+            }
+        }
+        catch
+        {
+            fatalError(error.localizedDescription)
+        }
+        let field = self.init(context: managedObjectContext)
+        field.form = form
+        field.templateField = templateField
+        field.guid = UUID()
+        do {
+            try managedObjectContext.save()
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+        
+        return field
+    }
 }

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AF_Form" representedClassName="AF_Form" syncable="YES" codeGenerationType="class">
+        <attribute name="changed_" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="missingRequirements_" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="parentGUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="updated_date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AF_Form" inverseName="parent" inverseEntity="AF_Form"/>
         <relationship name="template" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AF_Template" inverseName="forms" inverseEntity="AF_Template"/>
     </entity>
     <entity name="AF_FormField" representedClassName="AF_FormField" syncable="YES" codeGenerationType="class">
@@ -45,7 +47,7 @@
         <attribute name="tableName" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="AF_Form" positionX="-45" positionY="117" width="128" height="89"/>
+        <element name="AF_Form" positionX="-45" positionY="117" width="128" height="119"/>
         <element name="AF_FormField" positionX="-18" positionY="126" width="128" height="149"/>
         <element name="AF_Template" positionX="-63" positionY="-18" width="128" height="164"/>
         <element name="AF_TemplateField" positionX="-54" positionY="45" width="128" height="194"/>
