@@ -10,17 +10,20 @@ import CoreData
 
 public class Database {
     
-    var _mainContext: NSManagedObjectContext
-    var _privateMOC: NSManagedObjectContext
+    var _mainContext: NSManagedObjectContext!
+    var _privateMOC: NSManagedObjectContext!
     
-    static public let shared = Database()
+    static public var shared = Database(mc: nil, pc: nil)
     
-    public init() {
-        _mainContext = FormsPersistenceController.shared.container.viewContext
-        _mainContext.persistentStoreCoordinator = FormsPersistenceController.shared.container.persistentStoreCoordinator
-        _privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        _privateMOC.parent = _mainContext
-        _privateMOC.automaticallyMergesChangesFromParent = true
+    public init(mc: NSManagedObjectContext?, pc: NSManagedObjectContext?) {
+        guard mc != nil && pc != nil else { return }
+        _mainContext = mc!
+//        _mainContext = FormsPersistenceController.shared.container.viewContext
+//        _mainContext.persistentStoreCoordinator = FormsPersistenceController.shared.container.persistentStoreCoordinator
+        _privateMOC = pc!
+//        _privateMOC = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+//        _privateMOC.parent = _mainContext
+//        _privateMOC.automaticallyMergesChangesFromParent = true
     }
     
     public func sync(completionHandler: @escaping(Bool) -> Void) {
@@ -39,9 +42,9 @@ public class Database {
     
     func syncTemplate(with dispatchGroup: DispatchGroup, in context: NSManagedObjectContext, completionHandler: @escaping(Bool) -> Void) {
         dispatchGroup.enter()
-        Template.sync(in: context, handler: { templateResult in
+        AF_Template.sync(in: context, handler: { templateResult in
             if templateResult {
-                TemplateField.sync(in: context, handler: { fieldResult in
+                AF_TemplateField.sync(in: context, handler: { fieldResult in
                     if fieldResult {
                         completionHandler(true)
                     }
@@ -51,9 +54,9 @@ public class Database {
     }
     
     func syncForm(with dispatchGroup: DispatchGroup, in context: NSManagedObjectContext, completionHandler: @escaping(Bool) -> Void) {
-        Form.sync(in: context, handler: { formResult in
+        AF_Form.sync(in: context, handler: { formResult in
             if formResult {
-                FormField.sync(in: context, handler: { fieldResult in
+                AF_FormField.sync(in: context, handler: { fieldResult in
                     if fieldResult {
                         completionHandler(true)
                     }

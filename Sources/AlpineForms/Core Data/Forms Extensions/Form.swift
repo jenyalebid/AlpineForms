@@ -7,12 +7,12 @@
 
 import CoreData
 
-extension Form {
+extension AF_Form {
     
     static func sync(in managedObjectContext: NSManagedObjectContext, handler: @escaping ((Bool)->Void)) {
         managedObjectContext.performAndWait {
             do {
-                let lastUpdate = UpdateTracker.lastUpdate(in: managedObjectContext, tableName: "Form")
+                let lastUpdate = AF_UpdateTracker.lastUpdate(in: managedObjectContext, tableName: "Form")
                 FormsClientManager.shared.pool?.withConnection { con_from_pool in
                     do {
                         let connection = try con_from_pool.get()
@@ -65,20 +65,20 @@ extension Form {
                                     counter += 1
                                     let columns = try row.get().columns
                                     let id = try UUID(uuidString: columns[1].string())
-                                    let template = Template.find(in: managedObjectContext, by: id!)
+                                    let template = AF_Template.find(in: managedObjectContext, by: id!)
                                     
                                     if let template = template {
                                         let id = try UUID(uuidString: columns[0].string())
-                                        var form = Form.find(in: managedObjectContext, by: id!)
+                                        var form = AF_Form.find(in: managedObjectContext, by: id!)
                                         if form == nil {
-                                            form = Form(context: managedObjectContext)
+                                            form = AF_Form(context: managedObjectContext)
                                             form?.guid = id
                                         }
                                         if let form = form {
                                             form.template = template
                                             
                                             if let parentID = try UUID(uuidString: columns[2].optionalString() ?? "") {
-                                                if let parent = Form.find(in: managedObjectContext, by: parentID) {
+                                                if let parent = AF_Form.find(in: managedObjectContext, by: parentID) {
                                                     form.parent = parent
                                                 }
                                             }
@@ -92,7 +92,7 @@ extension Form {
                                 fatalError(error.localizedDescription)
                             }
                         }
-                        UpdateTracker.recordImport(in: managedObjectContext, tableName: "Form")
+                        AF_UpdateTracker.recordImport(in: managedObjectContext, tableName: "Form")
                         handler(true)
                     }
                     catch {
@@ -103,11 +103,11 @@ extension Form {
         }
     }
     
-    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> Form? {
-        var result: Form? = nil
+    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> AF_Form? {
+        var result: AF_Form? = nil
         do {
-            let fetchRequest: NSFetchRequest<Form>
-            fetchRequest = Form.fetchRequest()
+            let fetchRequest: NSFetchRequest<AF_Form>
+            fetchRequest = AF_Form.fetchRequest()
             fetchRequest.fetchLimit = 1
             fetchRequest.predicate = NSPredicate(format: "guid = %@", id as CVarArg)
             
@@ -119,10 +119,10 @@ extension Form {
         return result
     }
     
-    public static func findFromsBy(_ template: Template) -> [Form] {
+    public static func findFromsBy(_ template: AF_Template) -> [AF_Form] {
         do {
-            let fetchRequest: NSFetchRequest<Form>
-            fetchRequest = Form.fetchRequest()
+            let fetchRequest: NSFetchRequest<AF_Form>
+            fetchRequest = AF_Form.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "template = %@", template)
             
             return try Database.shared._mainContext.fetch(fetchRequest)

@@ -7,12 +7,12 @@
 
 import CoreData
 
-extension FormField {
+extension AF_FormField {
     
     static func sync(in managedObjectContext: NSManagedObjectContext, handler: @escaping ((Bool)->Void)) {
         managedObjectContext.performAndWait {
             do {
-                let lastUpdate = UpdateTracker.lastUpdate(in: managedObjectContext, tableName: "FormField")
+                let lastUpdate = AF_UpdateTracker.lastUpdate(in: managedObjectContext, tableName: "FormField")
                 FormsClientManager.shared.pool?.withConnection { con_from_pool in
                     do {
                         let connection = try con_from_pool.get()
@@ -69,18 +69,18 @@ extension FormField {
                                     counter += 1
                                     let columns = try row.get().columns
                                     let id = try UUID(uuidString: columns[2].string())
-                                    let form = Form.find(in: managedObjectContext, by: id!)
+                                    let form = AF_Form.find(in: managedObjectContext, by: id!)
                                     
                                     if let form = form {
                                         let columns = try row.get().columns
                                         let id = try UUID(uuidString: columns[1].string())
-                                        let templateField = TemplateField.find(in: managedObjectContext, by: id!)
+                                        let templateField = AF_TemplateField.find(in: managedObjectContext, by: id!)
                                         
                                         if let templateField = templateField {
                                             let id = try UUID(uuidString: columns[0].string())
-                                            var formField = FormField.find(in: managedObjectContext, by: id!)
+                                            var formField = AF_FormField.find(in: managedObjectContext, by: id!)
                                             if formField == nil {
-                                                formField = FormField(context: managedObjectContext)
+                                                formField = AF_FormField(context: managedObjectContext)
                                                 formField?.guid = id
                                             }
                                             if let formField = formField {
@@ -96,7 +96,7 @@ extension FormField {
                                             }
                                         }
                                     }
-                                    UpdateTracker.recordImport(in: managedObjectContext, tableName: "FormField")
+                                    AF_UpdateTracker.recordImport(in: managedObjectContext, tableName: "FormField")
                                 }
                             }
                             catch {
@@ -113,11 +113,11 @@ extension FormField {
         }
     }
     
-    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> FormField? {
-        var result: FormField? = nil
+    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> AF_FormField? {
+        var result: AF_FormField? = nil
         do {
-            let fetchRequest: NSFetchRequest<FormField>
-            fetchRequest = FormField.fetchRequest()
+            let fetchRequest: NSFetchRequest<AF_FormField>
+            fetchRequest = AF_FormField.fetchRequest()
             fetchRequest.fetchLimit = 1
             fetchRequest.predicate = NSPredicate(format: "guid = %@", id as CVarArg)
 

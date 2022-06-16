@@ -7,12 +7,12 @@
 
 import CoreData
 
-extension TemplateField {
+extension AF_TemplateField {
     
     static func sync(in managedObjectContext: NSManagedObjectContext, handler: @escaping ((Bool)->Void)) {
         managedObjectContext.performAndWait {
             do {
-//                let lastUpdate = UpdateTracker.lastUpdate(in: managedObjectContext, tableName: "TemplateField")
+//                let lastUpdate = AF_UpdateTracker.lastUpdate(in: managedObjectContext, tableName: "TemplateField")
                 FormsClientManager.shared.pool?.withConnection { con_from_pool in
                     do {
                         let connection = try con_from_pool.get()
@@ -71,13 +71,13 @@ extension TemplateField {
                                     counter += 1
                                     let columns = try row.get().columns
                                     let id = try UUID(uuidString: columns[1].string())
-                                    let template = Template.find(in: managedObjectContext, by: id!)
+                                    let template = AF_Template.find(in: managedObjectContext, by: id!)
                                     
                                     if let template = template {
                                         let id = try UUID(uuidString: columns[0].string())
-                                        var templateField = TemplateField.find(in: managedObjectContext, by: id!)
+                                        var templateField = AF_TemplateField.find(in: managedObjectContext, by: id!)
                                         if templateField == nil {
-                                            templateField = TemplateField(context: managedObjectContext)
+                                            templateField = AF_TemplateField(context: managedObjectContext)
                                             templateField?.guid = id
                                         }
                                         if let templateField = templateField {
@@ -103,7 +103,7 @@ extension TemplateField {
                                 fatalError("\(error)")
                             }
                         }
-                        UpdateTracker.recordImport(in: managedObjectContext, tableName: "TemplateField")
+                        AF_UpdateTracker.recordImport(in: managedObjectContext, tableName: "TemplateField")
                         handler(true)
                     }
                     catch {
@@ -114,11 +114,11 @@ extension TemplateField {
         }
     }
     
-    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> TemplateField? {
-        var result: TemplateField? = nil
+    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> AF_TemplateField? {
+        var result: AF_TemplateField? = nil
         do {
-            let fetchRequest: NSFetchRequest<TemplateField>
-            fetchRequest = TemplateField.fetchRequest()
+            let fetchRequest: NSFetchRequest<AF_TemplateField>
+            fetchRequest = AF_TemplateField.fetchRequest()
             fetchRequest.fetchLimit = 1
             fetchRequest.predicate = NSPredicate(format: "guid = %@", id as CVarArg)
 

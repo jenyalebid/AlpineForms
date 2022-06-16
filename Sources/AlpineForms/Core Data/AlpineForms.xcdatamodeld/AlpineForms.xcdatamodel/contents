@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Form" representedClassName="Form" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="20G165" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AF_Form" representedClassName="AF_Form" syncable="YES" codeGenerationType="class">
         <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="updated_date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Form" inverseName="parent" inverseEntity="Form"/>
-        <relationship name="template" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Template" inverseName="forms" inverseEntity="Template"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AF_Form" inverseName="parent" inverseEntity="AF_Form"/>
+        <relationship name="template" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AF_Template" inverseName="forms" inverseEntity="AF_Template"/>
     </entity>
-    <entity name="FormField" representedClassName="FormField" syncable="YES" codeGenerationType="class">
+    <entity name="AF_FormField" representedClassName="AF_FormField" syncable="YES" codeGenerationType="class">
         <attribute name="binary_data" optional="YES" attributeType="Binary"/>
         <attribute name="boolean_data" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="double_data" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="geometry" optional="YES" attributeType="String"/>
         <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="string_data" optional="YES" attributeType="String"/>
-        <relationship name="form" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Form"/>
-        <relationship name="templateField" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TemplateField"/>
+        <relationship name="form" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AF_Form"/>
+        <relationship name="templateField" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AF_TemplateField"/>
     </entity>
-    <entity name="Template" representedClassName="Template" syncable="YES" codeGenerationType="class">
+    <entity name="AF_Template" representedClassName="AF_Template" syncable="YES" codeGenerationType="class">
         <attribute name="guid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="is_deleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -24,10 +24,10 @@
         <attribute name="navigation_table_name" optional="YES" attributeType="String"/>
         <attribute name="report" optional="YES" attributeType="Binary"/>
         <attribute name="updated_date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="forms" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Form" inverseName="template" inverseEntity="Form"/>
-        <relationship name="templateFields" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TemplateField" inverseName="template" inverseEntity="TemplateField"/>
+        <relationship name="forms" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AF_Form" inverseName="template" inverseEntity="AF_Form"/>
+        <relationship name="templateFields" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AF_TemplateField" inverseName="template" inverseEntity="AF_TemplateField"/>
     </entity>
-    <entity name="TemplateField" representedClassName="TemplateField" syncable="YES" codeGenerationType="class">
+    <entity name="AF_TemplateField" representedClassName="AF_TemplateField" syncable="YES" codeGenerationType="class">
         <attribute name="caption" optional="YES" attributeType="String"/>
         <attribute name="custom_script" optional="YES" attributeType="String"/>
         <attribute name="field_order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -38,17 +38,17 @@
         <attribute name="table_field" optional="YES" attributeType="String"/>
         <attribute name="table_name" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
-        <relationship name="template" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Template" inverseName="templateFields" inverseEntity="Template"/>
+        <relationship name="template" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AF_Template" inverseName="templateFields" inverseEntity="AF_Template"/>
     </entity>
-    <entity name="UpdateTracker" representedClassName="UpdateTracker" syncable="YES" codeGenerationType="class">
+    <entity name="AF_UpdateTracker" representedClassName="AF_UpdateTracker" syncable="YES" codeGenerationType="class">
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="tableName" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Form" positionX="-45" positionY="117" width="128" height="89"/>
-        <element name="FormField" positionX="-18" positionY="126" width="128" height="149"/>
-        <element name="Template" positionX="-63" positionY="-18" width="128" height="164"/>
-        <element name="TemplateField" positionX="-54" positionY="45" width="128" height="194"/>
-        <element name="UpdateTracker" positionX="-9" positionY="162" width="128" height="59"/>
+        <element name="AF_Form" positionX="-45" positionY="117" width="128" height="89"/>
+        <element name="AF_FormField" positionX="-18" positionY="126" width="128" height="149"/>
+        <element name="AF_Template" positionX="-63" positionY="-18" width="128" height="164"/>
+        <element name="AF_TemplateField" positionX="-54" positionY="45" width="128" height="194"/>
+        <element name="AF_UpdateTracker" positionX="-9" positionY="162" width="128" height="59"/>
     </elements>
 </model>

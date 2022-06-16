@@ -8,12 +8,12 @@
 import CoreData
 import PostgresClientKit
 
-extension Template {
+extension AF_Template {
     
     static func sync(in managedObjectContext: NSManagedObjectContext, handler: @escaping ((Bool)->Void)) {
         managedObjectContext.performAndWait {
             do {
-                let lastUpdate = UpdateTracker.lastUpdate(in: managedObjectContext, tableName: "Template")
+                let lastUpdate = AF_UpdateTracker.lastUpdate(in: managedObjectContext, tableName: "Template")
                 FormsClientManager.shared.pool?.withConnection { con_from_pool in
                     do {
                         let connection = try con_from_pool.get()
@@ -69,10 +69,10 @@ extension Template {
                                     counter += 1
                                     let columns = try row.get().columns
                                     let id = try UUID(uuidString: columns[0].string())
-                                    var template = Template.find(in: managedObjectContext, by: id!)
+                                    var template = AF_Template.find(in: managedObjectContext, by: id!)
                             
                                     if template == nil {
-                                        template = Template(context: managedObjectContext)
+                                        template = AF_Template(context: managedObjectContext)
                                         template?.guid = id
                                     }
                                     if let template = template {
@@ -99,10 +99,10 @@ extension Template {
         }
     }
     
-    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> Template? {
-        var result: Template? = nil
+    static func find(in managedObjectContext: NSManagedObjectContext, by id: UUID) -> AF_Template? {
+        var result: AF_Template? = nil
         do {
-            let fetchRequest = Template.fetchRequest()
+            let fetchRequest = AF_Template.fetchRequest()
             fetchRequest.fetchLimit = 1
             fetchRequest.predicate = NSPredicate(format: "guid == %@", id as CVarArg)
 
@@ -114,8 +114,8 @@ extension Template {
         return result
     }
     
-    public static func all() -> [Template] {
-        let fetchRequest: NSFetchRequest<Template> = Template.fetchRequest()
+    public static func all() -> [AF_Template] {
+        let fetchRequest: NSFetchRequest<AF_Template> = AF_Template.fetchRequest()
         do {
             let results = try Database.shared._mainContext.fetch(fetchRequest)
             return results

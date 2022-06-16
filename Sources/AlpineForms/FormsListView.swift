@@ -13,12 +13,12 @@ public struct FormsListView: View {
     
 //    @FetchRequest private var forms: FetchedResults<Form>
     
-    var forms: [Form]
+    var forms: [AF_Form]
 
-    public init(template: Template) {
+    public init(template: AF_Template) {
 //        self._forms = FetchRequest(entity: Form.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \Form.updated_date, ascending: true)], predicate: NSPredicate(format: "template == %@", template), animation: .default)
         
-        forms = Form.findFromsBy(template)
+        forms = AF_Form.findFromsBy(template)
     }
     
     public var body: some View {

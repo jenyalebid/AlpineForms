@@ -8,12 +8,12 @@
 import Foundation
 import CoreData
 
-extension UpdateTracker {
+extension AF_UpdateTracker {
     
     static func lastUpdate(in managedObjectContext:NSManagedObjectContext, tableName: String) -> Date? {
-        var lastUpdate: UpdateTracker? = nil
+        var lastUpdate: AF_UpdateTracker? = nil
         managedObjectContext.performAndWait {
-            let fetchRequest: NSFetchRequest<UpdateTracker> = UpdateTracker.fetchRequest()
+            let fetchRequest: NSFetchRequest<AF_UpdateTracker> = AF_UpdateTracker.fetchRequest()
             fetchRequest.predicate = NSPredicate(format: "tableName = %@", tableName)
             fetchRequest.fetchLimit = 1
             
@@ -29,7 +29,7 @@ extension UpdateTracker {
             
                     if (lastUpdate != nil) {
                         do {
-                            lastUpdate = try managedObjectContext.existingObject(with: lastUpdate!.objectID) as? UpdateTracker
+                            lastUpdate = try managedObjectContext.existingObject(with: lastUpdate!.objectID) as? AF_UpdateTracker
                         }
                         catch {
                             fatalError(error.localizedDescription)
@@ -40,7 +40,7 @@ extension UpdateTracker {
     }
     
     static func recordImport(in managedObjectContext: NSManagedObjectContext, tableName: String) {
-        let fetchRequest: NSFetchRequest<UpdateTracker> = UpdateTracker.fetchRequest()
+        let fetchRequest: NSFetchRequest<AF_UpdateTracker> = AF_UpdateTracker.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "tableName = %@", tableName)
         managedObjectContext.performAndWait {
             do {
@@ -48,7 +48,7 @@ extension UpdateTracker {
                 for result in results {
                     managedObjectContext.delete(result)
                 }
-                let record = UpdateTracker.init(context: managedObjectContext)
+                let record = AF_UpdateTracker.init(context: managedObjectContext)
                 record.tableName = tableName
                 record.lastUpdate = Date()
             }
