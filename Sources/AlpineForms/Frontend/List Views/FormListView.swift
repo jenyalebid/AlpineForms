@@ -9,41 +9,42 @@ import SwiftUI
 
 public struct FormListView: View {
         
-    @FetchRequest private var forms: FetchedResults<AF_Form>
-    
-    var template: AF_Template
-    
+    @StateObject var viewModel: FormListViewModel
+        
     public init(template: AF_Template) {
-        self.template = template
-        self._forms = FetchRequest(entity: AF_Form.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \AF_Form.updated_date, ascending: true)], predicate: NSPredicate(format: "template == %@", template), animation: .default)
+        _viewModel = StateObject(wrappedValue: FormListViewModel(template: template))
     }
     
     public var body: some View {
         List {
-            ForEach(forms, id: \.self) { form in
-                Text("\(form.updated_date ?? Date())")
-                    .onTapGesture {
-                        selection(form: form)
-                    }
+            Section("Form Status") {
+                NavigationLink(destination: InnerFormListView(template: viewModel.template, predicate: viewModel.formListPredicate(listType: .notExported), title: "Not Exported")
+                    .environmentObject(viewModel)) {
+                    Text("Not Exported")
+                }
+                .listRowBackground(Color("NotExported"))
+                NavigationLink(destination: InnerFormListView(template: viewModel.template, predicate: viewModel.formListPredicate(listType: .modified), title: "Modified")
+                    .environmentObject(viewModel)) {
+                    Text("Modified")
+                }
+                .listRowBackground(Color("Modified"))
+            }
+            Section("\(viewModel.template.name ?? "") Forms") {
+                InnerFormListView(template: viewModel.template, predicate: viewModel.formListPredicate(listType: .regular), title: "", inner: false)
+                    .environmentObject(viewModel)
             }
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    selection()
+                    viewModel.selection()
                 } label: {
                     Image(systemName: "plus")
                 }
             }
         }
         .listStyle(.plain)
-        .navigationTitle("\(template.name ?? "")")
-    }
-    
-    func selection(form: AF_Form? = nil) {
-        FormSelector.shared.template = template
-        FormSelector.shared.form = form
-        NotificationCenter.default.post(name: Notification.Name("FormSelected"), object: nil)
+        .navigationTitle("\(viewModel.template.name ?? "")")
     }
 }
 
